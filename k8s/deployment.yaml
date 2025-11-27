@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversao-distancia
+  labels:
+    app: conversao-distancia
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: conversao-distancia
+  template:
+    metadata:
+      labels:
+        app: conversao-distancia
+    spec:
+      containers:
+      - name: conversao-distancia
+        image: gui3398/conversao-distancia:v1
+        ports:
+        - containerPort: 8000
+
+---        
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: conversao-distancia
+  labels: 
+    app: conversao-distancia
+spec:
+  selector:
+    app: conversao-distancia
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
