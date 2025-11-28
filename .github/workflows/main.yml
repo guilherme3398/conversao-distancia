@@ -7,12 +7,28 @@ on:
   workflow_dispatch:
 
   jobs:
-  CI:
-    name: Teste app
-    runs-on: ubuntu-latest
-    Steps:
-    
-    - name: Obtendo codigo do projeto
-    - uses: actions/checkout@v6
+    CI:
+      name: Teste app
+      runs-on: ubuntu-latest
+      Steps:
+      
+          - name: Obtendo codigo do projeto
+          - uses: actions/checkout@v6
 
-    
+          - name: Instalando Python
+          - uses: actions/setup-python@v6
+            with:
+            python-version: '3.13' 
+
+          - name: Instalando as dependencias
+            working-directory: ./src
+            run: | 
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            
+            - name: Instalando as dependencias
+            working-directory: ./src
+            run: | 
+              python -m pytest testes/ -v
+            
+    #terraform   
