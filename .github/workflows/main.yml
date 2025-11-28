@@ -26,7 +26,7 @@ jobs:
               pip install -r requirements.txt
                 
           - name: Execução dos testes
-            #working-directory: ./src
+            working-directory: ./src/tests
             run: |
               python -m pytest tests/ -v  
             
