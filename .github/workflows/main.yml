@@ -12,12 +12,12 @@ jobs:
       runs-on: ubuntu-latest
       steps:      
           - name: Obtendo codigo do projeto
-          - uses: actions/checkout@v6
+            uses: actions/checkout@v6
 
           - name: Instalando Python
-          - uses: actions/setup-python@v6
+            uses: actions/setup-python@v6
             with:
-            python-version: '3.13' 
+              python-version: '3.13' 
 
           - name: Instalação das Dependencias 
             working-directory: ./src #define qual diretorio irá excutar o comando abaixo
