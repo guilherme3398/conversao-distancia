@@ -28,6 +28,7 @@ metadata:
   name: conversao-distancia
   labels: 
     app: conversao-distancia
+    
 spec:
   selector:
     app: conversao-distancia

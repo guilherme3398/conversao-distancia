@@ -83,7 +83,7 @@ jobs:
             run: kubectl create namespace homologacao --dry-run=client -o yaml | kubectl apply -f -
 
           - name: Deploy no cluster Kubernetes ambiente homologação
-            run: kubectl apply -f k8s/deployment.yaml     
+            run: kubectl apply -f k8s/deployment.yaml --namespace homologacao     
 
 
           - name: Aguardar Load Balancer e Exibir URL
