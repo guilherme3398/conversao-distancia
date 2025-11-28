@@ -54,8 +54,66 @@ jobs:
             run: terraform init
             working-directory: ./terraform
             
-          - name: Terraform Apply
+          - name: Terraform Apply - Criando Infraestrutura
             run: terraform apply --auto-approve
             working-directory: ./terraform
 
+# Deploy EKS
+
+    CD-Homolog:
+      name: Deploy EKS
+      runs-on: ubuntu-latest
+      needs: terraform
+      steps: 
+
+          - name: Obtendo codigo Kubernetes
+            uses: actions/checkout@v6
+
+          - name: Configure AWS Credentials para Kubeconfig
+            uses: aws-actions/configure-aws-credentials@v5.1.1
+            with:
+                aws-region: us-east-1
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             
+          - name: Conectando no Cluster
+            run: aws eks update-kubeconfig --region us-east-1 --name conversao-distancia-cluster       
+
+          - name: Criando Namespace
+            run: kubectl create namespace homologacao --dry-run=client -o yaml | kubectl apply -f -
+
+          - name: Deploy no cluster Kubernetes ambiente homologação
+            run: kubectl apply -f k8s/deployment.yaml     
+
+
+          - name: Aguardar Load Balancer e Exibir URL
+            id: display_url # Define um ID para referenciar esta etapa
+            run: |
+              SERVICE_NAME="conversao-distancia"
+              NAMESPACE="homologacao"
+              TIMEOUT="300s" # 5 minutos de espera
+              
+              echo "Aguardando o provisionamento do Load Balancer (ALB/NLB) no namespace $NAMESPACE..."
+              
+              # 1. Espera que o Service esteja 'Ready' (ou seja, com um Hostname atribuído)
+              kubectl wait --namespace $NAMESPACE \
+                --for=condition=ready service/$SERVICE_NAME \
+                --timeout=$TIMEOUT
+              
+              # Verifica se o comando wait falhou
+              if [ $? -ne 0 ]; then
+                echo "❌ ERRO: O Load Balancer não foi provisionado a tempo. Verifique os logs do Load Balancer Controller."
+                exit 1
+              fi
+                
+              # 2. Extrai o URL do Load Balancer usando jsonpath
+              LOAD_BALANCER_URL=$(kubectl get service $SERVICE_NAME --namespace $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+
+              # 3. Exibe a URL no log do GitHub Actions
+              echo "=================================================================================="
+              echo "✅ DEPLOY CONCLUÍDO! URL da Aplicação:"
+              echo "http://$LOAD_BALANCER_URL"
+              echo "=================================================================================="
+              
+              # Define a URL como uma saída do job para que outros passos possam usá-la
+              echo "APP_URL=http://$LOAD_BALANCER_URL" >> $GITHUB_OUTPUT
