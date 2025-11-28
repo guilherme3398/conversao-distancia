@@ -94,20 +94,10 @@ jobs:
               TIMEOUT="300s" # 5 minutos de espera
               
               echo "Aguardando o provisionamento do Load Balancer (ALB/NLB) no namespace $NAMESPACE..."
-              
-              # 1. Espera que o Service esteja 'Ready' (ou seja, com um Hostname atribuído)
-              kubectl wait --namespace $NAMESPACE \
-                --for=condition=ready service/$SERVICE_NAME \
-                --timeout=$TIMEOUT
-              
-              # Verifica se o comando wait falhou
-              if [ $? -ne 0 ]; then
-                echo "❌ ERRO: O Load Balancer não foi provisionado a tempo. Verifique os logs do Load Balancer Controller."
-                exit 1
-              fi
-                
+                                         
+                           
               # 2. Extrai o URL do Load Balancer usando jsonpath
-              LOAD_BALANCER_URL=$(kubectl get service $SERVICE_NAME --namespace $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+              LOAD_BALANCER_URL=$(kubectl get service conversao-distancia --namespace homologacao -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 
               # 3. Exibe a URL no log do GitHub Actions
               echo "=================================================================================="
@@ -115,5 +105,3 @@ jobs:
               echo "http://$LOAD_BALANCER_URL"
               echo "=================================================================================="
               
-              # Define a URL como uma saída do job para que outros passos possam usá-la
-              echo "APP_URL=http://$LOAD_BALANCER_URL" >> $GITHUB_OUTPUT
