@@ -93,8 +93,7 @@ jobs:
               NAMESPACE="homologacao"
               TIMEOUT="300s" # 5 minutos de espera
               
-              echo "Aguardando o provisionamento do Load Balancer (ALB/NLB) no namespace $NAMESPACE..."
-                                         
+              echo "Aguardando o provisionamento do Load Balancer (ALB/NLB) no namespace $NAMESPACE..."                                   
                            
               # 2. Extrai o URL do Load Balancer usando jsonpath
               LOAD_BALANCER_URL=$(kubectl get service conversao-distancia --namespace homologacao -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')

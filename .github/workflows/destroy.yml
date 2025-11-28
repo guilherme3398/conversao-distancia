@@ -1,0 +1,31 @@
+name: Destroi Infraestrutura
+
+on:
+  workflow_dispatch:
+
+jobs:
+    destroi_infraestrutura:
+      name: Destroi aplicação
+      runs-on: ubuntu-latest
+      steps:      
+        - name: Configure AWS Credentials para Kubeconfig
+          uses: aws-actions/configure-aws-credentials@v5.1.1
+          with:
+                aws-region: us-east-1
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+        - name: Obtendo codigo Terraform
+          uses: actions/checkout@v6        
+
+        - name: Instalando terraform
+          uses: hashicorp/setup-terraform@v3
+         
+
+        - name: Terraform init
+          run: terraform init
+          working-directory: ./terraform
+            
+        - name: Terraform Destroy - Destruindo Infraestrutura
+          run: terraform destroy --auto-approve
+          working-directory: ./terraform
