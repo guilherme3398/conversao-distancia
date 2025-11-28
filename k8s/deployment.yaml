@@ -27,8 +27,24 @@ kind: Service
 metadata:
   name: conversao-distancia
   labels: 
+  
+# ANOTAÇÕES CRÍTICAS PARA FORÇAR O ALB E O PROTOCOLO HTTP
     app: conversao-distancia
+  annotations:
+    # 1. Força a criação de um ALB (Application Load Balancer)
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
     
+    # 2. Instruções de Health Check para o ALB
+    # CRÍTICO: Define que o Health Check deve usar HTTP
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: HTTP
+    
+    # CRÍTICO: Define o caminho de verificação de saúde (sua aplicação responde na raiz)
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /
+    
+    # Define a porta do Health Check como a porta do contêiner (8000)
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: '8000'
+
 spec:
   selector:
     app: conversao-distancia
