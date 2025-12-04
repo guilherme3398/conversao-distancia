@@ -23,7 +23,7 @@ jobs:
           run: aws eks update-kubeconfig --region us-east-1 --name conversao-distancia-cluster    
           
         - name: Excluindo aplicação
-          run: kubectl delete -f k8s/deployment.yaml --namespace homologacao
+          run: kubectl delete -f k8s/deployment.yaml --namespace homologacao --wait=true
 
         - name: Instalando terraform
           uses: hashicorp/setup-terraform@v3
