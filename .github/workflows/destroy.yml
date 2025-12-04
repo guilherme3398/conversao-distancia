@@ -16,7 +16,10 @@ jobs:
                 aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
         - name: Obtendo codigo Terraform
-          uses: actions/checkout@v6        
+          uses: actions/checkout@v6      
+          
+        - name: Excluindo aplicação
+          run: kubectl delete -f k8s/deployment.yaml --namespace homologacao
 
         - name: Instalando terraform
           uses: hashicorp/setup-terraform@v3

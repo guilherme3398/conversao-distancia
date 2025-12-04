@@ -1,0 +1,47 @@
+# Armazenamento Efemero, sem o storageClassName:
+prometheus:
+  enabled: true 
+  
+  prometheusSpec:
+    retention: 2d
+    storageSpec:
+      # CORREÇÃO CRÍTICA: SUBSTITUINDO volumeClaimTemplate por emptyDir
+      # Isso desativa a persistência e permite que o Prometheus suba imediatamente
+      emptyDir: {} 
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: true
+  adminPassword: "grafana123"
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+
+
+# prometheus:
+#   enabled: true
+#   prometheusSpec:
+#     retention: 2d
+#     storageSpec:
+#       volumeClaimTemplate:
+#         spec:
+#           #storageClassName: gp3 
+#           #storageClassName: gp2
+#           accessModes:
+#             - ReadWriteOnce
+#           resources:
+#             requests:
+#               storage: 20Gi
+# grafana:
+#   enabled: true
+#   adminPassword: "grafana123" 
+  
+#   # Configuração do Service (LoadBalancer já definido no main.tf, mas pode ser configurado aqui)
+#   service:
+#     type: LoadBalancer
+#     annotations:
+#       # Anotações do ALB para o Service do Grafana (acesso HTTP)
+#       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+

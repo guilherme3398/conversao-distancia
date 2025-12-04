@@ -13,10 +13,17 @@ spec:
     metadata:
       labels:
         app: conversao-distancia
+
+## CONFIGURAÇÃO PROMETHEUS
+      annotations: 
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+
     spec:
       containers:
       - name: conversao-distancia
-        image: gui3398/conversao-distancia:v1
+        image: gui3398/conversao-distancia:v2
         ports:
         - containerPort: 8000
 

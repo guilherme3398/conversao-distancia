@@ -37,3 +37,16 @@ depends_on = [
   module.eks_node_group
 ]
 }
+
+module "observabilidade" {
+  source                 = "./modulos/5-observabilidade"
+  project_name           = var.project_name
+  tags                   = local.tags
+  cluster_name           = module.eks_cluster.cluster_name
+  cluster_endpoint       = module.eks_cluster.endpoint
+  eks_managed_node_group_id = module.eks_node_group.node_group_id
+  # Depende explicitamente do Load Balancer Controller e dos Nodes
+  depends_on = [
+    module.eks_load_balancer_controller
+  ]
+}
